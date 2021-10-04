@@ -75,5 +75,8 @@ public class CustomService implements Runnable{
         System.out.println("Role mail ============== DONE " + roleRepo.count());
     }
 
+    @Transactional(dontRollbackOn = Exception.class)
+    public void filterAll() {
 
+    }
 }

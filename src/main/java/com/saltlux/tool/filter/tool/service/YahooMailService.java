@@ -2,11 +2,13 @@ package com.saltlux.tool.filter.tool.service;
 
 import com.saltlux.tool.filter.tool.model.AppleModel;
 import com.saltlux.tool.filter.tool.model.IdEmail;
+import com.saltlux.tool.filter.tool.model.InvalidModel;
 import com.saltlux.tool.filter.tool.model.YahooMailModel;
 import com.saltlux.tool.filter.tool.repo.*;
 import com.saltlux.tool.filter.tool.util.AppUtil;
 import com.saltlux.tool.filter.tool.util.FileUtil;
 import com.saltlux.tool.filter.tool.util.FilterUtil;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
@@ -30,10 +32,9 @@ import java.util.stream.Collectors;
 @Setter
 public class YahooMailService implements Runnable {
 
-
-    private Integer page;
     private Integer size;
     private String type;
+    private List<YahooMailModel> yahooMailModels = new ArrayList<>();
 
     @Autowired
     private EmailRepo emailRepo;
@@ -63,34 +64,49 @@ public class YahooMailService implements Runnable {
         System.out.println("Yahoo mail with concurrent task executor ============== DONE " + Thread.currentThread().getName());
     }
 
-    @Transactional(dontRollbackOn = Exception.class)
-    public void filterYahooMail() {
-        ExecutorService executorService = Executors.newFixedThreadPool(5);
+    public synchronized void filterYahooMail() {
         for (int i = 0; i < 5; i++) {
-            executorService.execute(() -> {
-                try {
-                    Pageable pageable = PageRequest.of(page, size);
-                    Page<IdEmail> idEmails = emailRepo.findAllByMemberPrimaryEmailIgnoreCaseContaining(pageable, type);
-                    System.out.println("Yahoo mail with page = " + page + " and type = " + type + " = " + idEmails.getTotalElements() + ". Thread: " + Thread.currentThread().getName());
-                    List<YahooMailModel> businessEmailModels = AppUtil.mapAll(idEmails.getContent(), YahooMailModel.class);
-                    List<String> ids = businessEmailModels.stream().map(YahooMailModel::getMemberId).collect(Collectors.toList());
-                    yahooEmailRepo.saveAll(businessEmailModels);
-                    emailRepo.deleteAllByIdInBatch(ids);
-                    System.out.println(type + " mail ============== DONE ");
-//        Thread.currentThread().setDaemon(false);
-                } catch (Exception e) {
-                    e.getMessage();
-                }
-            });
+            YahooMailRun yahooMailRun = new YahooMailRun(i);
+            Thread thread = new Thread(yahooMailRun);
+            thread.start();
         }
     }
 
     @Override
     public void run() {
-        try {
-            filterYahooMail();
-        } catch (Exception e) {
-            e.getMessage();
+        saveAll(yahooMailModels);
+    }
+
+    @Transactional
+    public void saveAll(List<YahooMailModel> invalidModels) {
+        if (Objects.isNull(invalidModels) || invalidModels.size() == 0) {
+            return;
+        }
+        yahooEmailRepo.saveAll(invalidModels);
+        System.out.println("Save Success Yahoo Mail");
+    }
+
+    @AllArgsConstructor
+    class YahooMailRun implements Runnable {
+
+        private Integer page;
+
+        @Transactional(dontRollbackOn = Exception.class)
+        @Override
+        public void run() {
+            try {
+                Pageable pageable = PageRequest.of(page, size);
+                Page<IdEmail> idEmails = emailRepo.findAllByMemberPrimaryEmailIgnoreCaseContaining(pageable, type);
+                System.out.println("Yahoo mail with page = " + page + " and type = " + type + ". Thread: " + Thread.currentThread().getName());
+                List<YahooMailModel> businessEmailModels = AppUtil.mapAll(idEmails.getContent(), YahooMailModel.class);
+                List<String> ids = businessEmailModels.stream().map(YahooMailModel::getMemberId).collect(Collectors.toList());
+                yahooEmailRepo.saveAll(businessEmailModels);
+                emailRepo.deleteAllByIdInBatch(ids);
+                System.out.println(type + " mail ============== DONE ");
+//        Thread.currentThread().setDaemon(false);
+            } catch (Exception e) {
+                e.getMessage();
+            }
         }
     }
 }

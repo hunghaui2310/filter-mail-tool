@@ -3,6 +3,7 @@ package com.saltlux.tool.filter.tool.service;
 import com.saltlux.tool.filter.tool.model.*;
 import com.saltlux.tool.filter.tool.repo.*;
 import com.saltlux.tool.filter.tool.util.AppUtil;
+import com.saltlux.tool.filter.tool.util.BusinessMailType;
 import com.saltlux.tool.filter.tool.util.FilterConstraints;
 import com.saltlux.tool.filter.tool.util.FilterUtil;
 import lombok.Getter;
@@ -24,10 +25,7 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
@@ -35,20 +33,46 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @Getter
 @Setter
-public class BusinessEmailService implements Runnable {
+public class BusinessEmailService implements Runnable, IFilterService {
 
     private Integer page;
     private Integer size;
     private String type;
+    private List<BusinessEmailModel> businessEmailModels = new LinkedList<>();
+//    private List<BusinessEmailModel> businessEmailModelsRest = new LinkedList<>();
 
-    @Autowired
-    private BusinessEmailRepo businessEmailRepo;
-
-    @Autowired
     private EmailRepo emailRepo;
+    private BusinessEmailRepo businessEmailRepo;
+    private BusinessAutomotiveMailRepo businessAutomotiveMailRepo;
+    private BusinessBankingMailRepo businessBankingMailRepo;
+    private BusinessFashionMailRepo businessFashionMailRepo;
+    private BusinessGlobalMailRepo businessGlobalMailRepo;
+    private BusinessHealthCareMailRepo businessHealthCareMailRepo;
+    private BusinessHotelMailRepo businessHotelMailRepo;
+    private BusinessLawMailRepo businessLawMailRepo;
+    private BusinessMediaMailRepo businessMediaMailRepo;
+    private BusinessTechMailRepo businessTechMailRepo;
+    private LspRepo lspRepo;
 
     @Autowired
-    private OtherRepo otherRepo;
+    public BusinessEmailService(EmailRepo emailRepo, BusinessEmailRepo businessEmailRepo, BusinessAutomotiveMailRepo businessAutomotiveMailRepo,
+                                BusinessBankingMailRepo businessBankingMailRepo, BusinessFashionMailRepo businessFashionMailRepo,
+                                BusinessGlobalMailRepo businessGlobalMailRepo, BusinessHealthCareMailRepo businessHealthCareMailRepo,
+                                BusinessHotelMailRepo businessHotelMailRepo, BusinessLawMailRepo businessLawMailRepo,
+                                BusinessMediaMailRepo businessMediaMailRepo, BusinessTechMailRepo businessTechMailRepo, LspRepo lspRepo) {
+        this.emailRepo = emailRepo;
+        this.businessEmailRepo = businessEmailRepo;
+        this.businessAutomotiveMailRepo = businessAutomotiveMailRepo;
+        this.businessBankingMailRepo = businessBankingMailRepo;
+        this.businessFashionMailRepo = businessFashionMailRepo;
+        this.businessGlobalMailRepo = businessGlobalMailRepo;
+        this.businessHealthCareMailRepo = businessHealthCareMailRepo;
+        this.businessHotelMailRepo = businessHotelMailRepo;
+        this.businessLawMailRepo = businessLawMailRepo;
+        this.businessMediaMailRepo = businessMediaMailRepo;
+        this.businessTechMailRepo = businessTechMailRepo;
+        this.lspRepo = lspRepo;
+    }
 
     public BusinessEmailService(Integer page, Integer size) {
         this.page = page;
@@ -57,20 +81,16 @@ public class BusinessEmailService implements Runnable {
 
     @Transactional(dontRollbackOn = Exception.class)
     public void filterBusinessToOther() {
-        Pageable pageable = PageRequest.of(page, size);
-        Page<BusinessEmailModel> idEmails = businessEmailRepo.findAllByMemberPrimaryEmailIgnoreCaseContaining(pageable, type);
-        List<OtherModel> businessEmailModels = AppUtil.mapAll(idEmails.getContent(), OtherModel.class);
-        List<String> ids = businessEmailModels.stream().map(OtherModel::getMemberId).collect(Collectors.toList());
-        otherRepo.saveAll(businessEmailModels);
-        businessEmailRepo.deleteAllByIdInBatch(ids);
-        System.out.println("Business mail with concurrent task executor ============== DONE " + Thread.currentThread().getName());
+
     }
 
     @Transactional(dontRollbackOn = Exception.class)
     public void filterBusinessMail() throws Exception {
         Pageable pageable = PageRequest.of(page, size);
+        long start2 = System.currentTimeMillis();
         Page<IdEmail> idEmails = emailRepo.findAll(pageable);
-//        System.out.println("Business mail with page = " + page + " and type = " + type + " = " + idEmails.getTotalElements() + ". Thread: " + Thread.currentThread().getName());
+        long end2 = System.currentTimeMillis();
+        System.out.println("Business mail with page = " + page + " and type = " + type + ". Thread: " + Thread.currentThread().getName() + ",time = " + (end2- start2));
 //        List<BusinessEmailModel> businessEmailModels = AppUtil.mapAll(idEmails.getContent(), BusinessEmailModel.class)
 //                .stream()
 //                .filter(item -> Objects.nonNull(item.getMemberPrimaryEmail()) && FilterUtil.filterBusinessEmail(item.getMemberPrimaryEmail()))
@@ -92,7 +112,7 @@ public class BusinessEmailService implements Runnable {
         }
         businessEmailRepo.saveAll(businessEmailModels);
         emailRepo.deleteAllByIdInBatch(ids);
-//        System.out.println("Business mail ============== DONE " + businessEmailRepo.count());
+        System.out.println("Business mail ============== DONE ");
         Thread.currentThread().setDaemon(false);
     }
 
@@ -126,14 +146,106 @@ public class BusinessEmailService implements Runnable {
 
     @Override
     public void run() {
-        try {
-            filterBusinessMail();
-        } catch (Exception e) {
-            e.getMessage();
-        }
+        filterFromBusiness(this.businessEmailModels);
     }
 
     public long countAll() {
         return businessEmailRepo.count();
+    }
+
+    @Transactional
+    public void saveAll(List<BusinessEmailModel> businessEmailModels) {
+        if (Objects.isNull(businessEmailModels) || businessEmailModels.size() == 0) {
+            return;
+        }
+        businessEmailRepo.saveAll(businessEmailModels);
+        System.out.println("Save Success Business Mail");
+    }
+
+    @Override
+    public void filter(List<IdEmail> idEmails) {
+        System.out.println("Called to Business mail Service " + Thread.currentThread().getName());
+    }
+
+    @Transactional(dontRollbackOn = Exception.class)
+    public void filterFromBusiness(List<BusinessEmailModel> businessEmailModels) {
+        List<BusinessEmailModel> listAfterFilterMedia = filterBusinessByType(businessEmailModels, BusinessMailType.MEDIA);
+        List<BusinessEmailModel> listAfterFilterHotel = filterBusinessByType(listAfterFilterMedia, BusinessMailType.HOTEL);
+        List<BusinessEmailModel> listAfterFilterFashion = filterBusinessByType(listAfterFilterHotel, BusinessMailType.FASHION);
+        List<BusinessEmailModel> listAfterFilterLaw = filterBusinessByType(listAfterFilterFashion, BusinessMailType.LAW);
+        List<BusinessEmailModel> listAfterFilterHealthCare = filterBusinessByType(listAfterFilterLaw, BusinessMailType.HEALTH_CARE);
+        List<BusinessEmailModel> listAfterFilterGlobal = filterBusinessByType(listAfterFilterHealthCare, BusinessMailType.GLOBAL);
+        List<BusinessEmailModel> listAfterFilterAutomotive = filterBusinessByType(listAfterFilterGlobal, BusinessMailType.AUTOMOTIVE);
+        List<BusinessEmailModel> listAfterFilterBanking = filterBusinessByType(listAfterFilterAutomotive, BusinessMailType.BANKING);
+        List<BusinessEmailModel> listAfterFilterTech = filterBusinessByType(listAfterFilterBanking, BusinessMailType.TECH);
+        if (Objects.nonNull(listAfterFilterTech) && listAfterFilterTech.size() > 0) {
+            Map<Boolean, List<BusinessEmailModel>> numbersByIsPositive = listAfterFilterTech.stream()
+                    .collect(Collectors.groupingBy(mail -> (Objects.nonNull(mail.getMemberPrimaryEmail()) && FilterUtil.filterLSPMail(mail.getMemberPrimaryEmail()))));
+            List<BusinessEmailModel> businessEmailModelsLsp = numbersByIsPositive.get(true);
+            if (Objects.nonNull(businessEmailModelsLsp) && businessEmailModelsLsp.size() > 0) {
+                List<LspModel> lspModels = AppUtil.mapAll(businessEmailModelsLsp, LspModel.class);
+                lspRepo.saveAll(lspModels);
+            }
+            List<BusinessEmailModel> businessEmailModelRest = numbersByIsPositive.get(false);
+            if (Objects.nonNull(businessEmailModelRest) && businessEmailModelRest.size() > 0) {
+                List<IdEmail> idEmailList = AppUtil.mapAll(businessEmailModelRest, IdEmail.class);
+                emailRepo.saveAll(idEmailList);
+            }
+        }
+//        System.out.println("Total mail to delete: " + this.businessEmailModelsRest.size() + " in thread: " + Thread.currentThread().getName());
+        businessEmailRepo.deleteAllByIdInBatch(businessEmailModels.stream().map(BusinessEmailModel::getMemberId).collect(Collectors.toList()));
+        System.out.println("Done filter in Thread: " + Thread.currentThread().getName());
+    }
+
+    @Transactional(dontRollbackOn = Exception.class)
+    public List<BusinessEmailModel> filterBusinessByType(List<BusinessEmailModel> businessEmailModels, BusinessMailType businessMailType) {
+        if (Objects.isNull(businessEmailModels) || businessEmailModels.size() == 0) {
+            return null;
+        }
+        Map<Boolean, List<BusinessEmailModel>> numbersByIsPositive = businessEmailModels.stream()
+                .collect(Collectors.groupingBy(mail -> (Objects.nonNull(mail.getMemberPrimaryEmail()) && FilterUtil.filterBusinessByType(mail.getMemberPrimaryEmail(), businessMailType))));
+        List<BusinessEmailModel> idEmailsOut = numbersByIsPositive.get(true);
+        if (Objects.nonNull(idEmailsOut) && idEmailsOut.size() > 0) {
+            switch (businessMailType) {
+                case GLOBAL:
+                    List<BusinessGlobalModel> globalModels = AppUtil.mapAll(idEmailsOut, BusinessGlobalModel.class);
+                    businessGlobalMailRepo.saveAll(globalModels);
+                    break;
+                case MEDIA:
+                    List<BusinessMediaModel> mediaModels = AppUtil.mapAll(idEmailsOut, BusinessMediaModel.class);
+                    businessMediaMailRepo.saveAll(mediaModels);
+                    break;
+                case AUTOMOTIVE:
+                    List<BusinessAutomotiveModel> automotiveModels = AppUtil.mapAll(idEmailsOut, BusinessAutomotiveModel.class);
+                    businessAutomotiveMailRepo.saveAll(automotiveModels);
+                    break;
+                case HOTEL:
+                    List<BusinessHotelModel> businessHotelModels = AppUtil.mapAll(idEmailsOut, BusinessHotelModel.class);
+                    businessHotelMailRepo.saveAll(businessHotelModels);
+                    break;
+                case FASHION:
+                    List<BusinessFashionModel> fashionModels = AppUtil.mapAll(idEmailsOut, BusinessFashionModel.class);
+                    businessFashionMailRepo.saveAll(fashionModels);
+                    break;
+                case BANKING:
+                    List<BusinessBankingModel> businessBankingModels = AppUtil.mapAll(idEmailsOut, BusinessBankingModel.class);
+                    businessBankingMailRepo.saveAll(businessBankingModels);
+                    break;
+                case TECH:
+                    List<BusinessTechModel> techModels = AppUtil.mapAll(idEmailsOut, BusinessTechModel.class);
+                    businessTechMailRepo.saveAll(techModels);
+                    break;
+                case LAW:
+                    List<BusinessLawModel> lawModels = AppUtil.mapAll(idEmailsOut, BusinessLawModel.class);
+                    businessLawMailRepo.saveAll(lawModels);
+                    break;
+                case HEALTH_CARE:
+                    List<BusinessHealthCareModel> healthCareModels = AppUtil.mapAll(idEmailsOut, BusinessHealthCareModel.class);
+                    businessHealthCareMailRepo.saveAll(healthCareModels);
+                    break;
+            }
+//            this.businessEmailModelsRest.addAll(idEmailsOut);
+        }
+        return numbersByIsPositive.get(false);
     }
 }

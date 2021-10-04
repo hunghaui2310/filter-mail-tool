@@ -1,13 +1,11 @@
 package com.saltlux.tool.filter.tool;
 
+import com.saltlux.tool.filter.tool.controller.FilterAllMailController;
 import com.saltlux.tool.filter.tool.model.BusinessEmailModel;
 import com.saltlux.tool.filter.tool.model.IdEmail;
 import com.saltlux.tool.filter.tool.repo.BusinessEmailRepo;
 import com.saltlux.tool.filter.tool.repo.EmailRepo;
-import com.saltlux.tool.filter.tool.service.BusinessEmailService;
-import com.saltlux.tool.filter.tool.service.EmailService;
-import com.saltlux.tool.filter.tool.service.OthersMailService;
-import com.saltlux.tool.filter.tool.service.YahooMailService;
+import com.saltlux.tool.filter.tool.service.*;
 import com.saltlux.tool.filter.tool.util.AppUtil;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +22,15 @@ class ToolApplicationTests {
 
 	@Autowired
 	private BusinessEmailRepo businessEmailRepo;
+
+	@Autowired
+	private BusinessEmailService businessEmailService;
+
+	@Autowired
+	private FilterAllMailController filterAllMailController;
+
+	@Autowired
+	private SaveAllService saveAllService;
 
 	@Test
 	void contextLoads() {
@@ -48,8 +55,15 @@ class ToolApplicationTests {
 		System.out.println(idEmails.getTotalElements());
 	}
 
-//	@Test
-//	void testYahooEmail() {
-//		yahooMailService.run();
-//	}
+	@Test
+	void testYahooEmail() {
+//		businessEmailService.filterBusinessMail();
+	}
+
+	@Test
+	void filterAllMail() throws InterruptedException {
+		filterAllMailController.filterAllMail(100);
+		Thread.sleep(2000);
+		saveAllService.saveAllMail();
+	}
 }

@@ -1,4 +1,4 @@
-package com.saltlux.tool.filter.tool.model;
+package com.saltlux.tool.filter.tool.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -23,5 +23,5 @@ public class StatisticDto implements Serializable {
     private long roleMail;
     private long vietnamMail;
     private long yahooMail;
-
+    private long totalMail;
 }

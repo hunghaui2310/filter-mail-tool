@@ -1,6 +1,8 @@
 package com.saltlux.tool.filter.tool.controller;
 
+import com.saltlux.tool.filter.tool.model.BusinessEmailModel;
 import com.saltlux.tool.filter.tool.model.IdEmail;
+import com.saltlux.tool.filter.tool.repo.BusinessEmailRepo;
 import com.saltlux.tool.filter.tool.repo.EmailRepo;
 import com.saltlux.tool.filter.tool.service.*;
 import com.saltlux.tool.filter.tool.util.AppUtil;
@@ -39,52 +41,43 @@ public class TestController {
     private EmailRepo emailRepo;
 
     @Autowired
+    private BusinessEmailRepo businessEmailRepo;
+
+    @Autowired
     private ApplicationContext applicationContext;
 
-    private final Integer NUM_OF_THREAD = 5;
+    private final Integer SIZE = 5000;
 
     @GetMapping("/apple-mail")
     public void filterAppleMail() {
         System.out.println("Staring filter apple mail");
-        ThreadPoolTaskExecutor taskExecutor = (ThreadPoolTaskExecutor) applicationContext.getBean("taskExecutor");
         for (int i = 0; i < FilterConstraints.APPLES.length; i++) {
-//            for (int j = 0; j < 5; j++) {
-                AppleMailService businessEmailService = (AppleMailService) applicationContext.getBean("appleMailService");
-                businessEmailService.setSize(1000);
-                businessEmailService.setType(FilterConstraints.APPLES[i]);
-//                try {
-                    taskExecutor.submit(businessEmailService);
-//                    Thread.sleep(2000);
-//                } catch (InterruptedException e) {
-//                    e.printStackTrace();
-//                }
-//                int count = taskExecutor.getActiveCount();
-//                if (count == 0) {
-//                    System.out.println("Killed all Thread In Apple Mail");
-//                }
-//            }
+            AppleMailService businessEmailService = (AppleMailService) applicationContext.getBean("appleMailService");
+            businessEmailService.setSize(SIZE);
+            businessEmailService.setType(FilterConstraints.APPLES[i]);
+            Thread thread = new Thread(businessEmailService);
+            thread.start();
         }
     }
 
     @GetMapping("/business")
     public void filterBusinessMail() {
-        System.out.println("Staring filter business mail");
-//        ThreadPoolTaskExecutor taskExecutor = (ThreadPoolTaskExecutor) applicationContext.getBean("taskExecutor");
-        ExecutorService executor = Executors.newFixedThreadPool(30);
-        for (int i = 0; i < 30; i++) {
+        System.out.println("======================Staring filter business mail");
+        ThreadPoolTaskExecutor taskExecutor = (ThreadPoolTaskExecutor) applicationContext.getBean("taskExecutor");
+//        ExecutorService executor = Executors.newFixedThreadPool(1);
+        for (int i = 0; i < 10; i++) {
+            Pageable pageable = PageRequest.of(i, SIZE);
+            Page<BusinessEmailModel> businessEmailModels = businessEmailRepo.findAll(pageable);
             BusinessEmailService businessEmailService = (BusinessEmailService) applicationContext.getBean("businessEmailService");
-            businessEmailService.setPage(i);
-            businessEmailService.setSize(1000);
-            businessEmailService.setType("BUSINESS"); // bullshit type
-            try {
-                executor.submit(businessEmailService);
-                Thread.sleep(1300);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-//            int count = taskExecutor.getActiveCount();
-//            if (count == 0) {
-//                System.out.println("Killed all Thread in Business Mail");
+//            businessEmailService.setPage(i);
+//            businessEmailService.setSize(SIZE);
+            businessEmailService.setBusinessEmailModels(businessEmailModels.getContent());
+//            businessEmailService.setType("BUSINESS"); // bullshit type
+//            try {
+                taskExecutor.submit(businessEmailService);
+//                Thread.sleep(1300);
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
 //            }
         }
     }
@@ -92,198 +85,102 @@ public class TestController {
     @GetMapping("/gmail")
     public void filterGmail() {
         System.out.println("Staring filter gmail");
-        ThreadPoolTaskExecutor taskExecutor = (ThreadPoolTaskExecutor) applicationContext.getBean("taskExecutor");
         for (int i = 0; i < FilterConstraints.GMAILS.length; i++) {
-//            for (int j = 0; j < 10; j++) {
-                EmailService businessEmailService = (EmailService) applicationContext.getBean("emailService");
-                businessEmailService.setPage(0);
-                businessEmailService.setSize(1000);
-                businessEmailService.setType(FilterConstraints.GMAILS[i]);
-                try {
-                    taskExecutor.submit(businessEmailService);
-                    Thread.sleep(4000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                int count = taskExecutor.getActiveCount();
-                if (count == 0) {
-                    System.out.println("Killed all Thread In Gmail");
-                }
-//            }
+            EmailService businessEmailService = (EmailService) applicationContext.getBean("emailService");
+            businessEmailService.setSize(SIZE);
+            businessEmailService.setType(FilterConstraints.GMAILS[i]);
+            Thread thread = new Thread(businessEmailService);
+            thread.start();
         }
     }
 
     @GetMapping("/gov-mail")
     public void filterGovMail() {
         System.out.println("Staring filter gov mail");
-        ThreadPoolTaskExecutor taskExecutor = (ThreadPoolTaskExecutor) applicationContext.getBean("taskExecutor");
         for (int i = 0; i < FilterConstraints.GOVS.length; i++) {
-//            for (int j = 0; j < 5; j++) {
-                GovMailService businessEmailService = (GovMailService) applicationContext.getBean("govMailService");
-                businessEmailService.setPage(0);
-                businessEmailService.setSize(1000);
-                businessEmailService.setType(FilterConstraints.GOVS[i]);
-                try {
-                    taskExecutor.submit(businessEmailService);
-                    Thread.sleep(2000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                int count = taskExecutor.getActiveCount();
-                if (count == 0) {
-                    System.out.println("Killed all Thread In Gov Mail");
-                }
-//            }
+            GovMailService businessEmailService = (GovMailService) applicationContext.getBean("govMailService");
+            businessEmailService.setSize(SIZE);
+            businessEmailService.setType(FilterConstraints.GOVS[i]);
+            Thread thread = new Thread(businessEmailService);
+            thread.start();
         }
     }
 
     @GetMapping("/invalid-mail")
     public void filterInvalidMail() {
         System.out.println("Staring filter invalid mail");
-        ThreadPoolTaskExecutor taskExecutor = (ThreadPoolTaskExecutor) applicationContext.getBean("taskExecutor");
         for (int i = 0; i < FilterConstraints.INVALIDS.length; i++) {
-//            for (int j = 0; j < 5; j++) {
-                InvalidMailService businessEmailService = (InvalidMailService) applicationContext.getBean("invalidMailService");
-                businessEmailService.setPage(0);
-                businessEmailService.setSize(1000);
-                businessEmailService.setType(FilterConstraints.INVALIDS[i]);
-                try {
-                    taskExecutor.submit(businessEmailService);
-                    Thread.sleep(4000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                int count = taskExecutor.getActiveCount();
-                if (count == 0) {
-                    System.out.println("Killed all Thread In Invalid Mail");
-                }
-//            }
+            InvalidMailService businessEmailService = (InvalidMailService) applicationContext.getBean("invalidMailService");
+            businessEmailService.setSize(SIZE);
+            businessEmailService.setType(FilterConstraints.INVALIDS[i]);
+            Thread thread = new Thread(businessEmailService);
+            thread.start();
         }
     }
 
     @GetMapping("/lsp-mail")
     public void filterLspMail() {
         System.out.println("Staring filter lsp mail");
-        ThreadPoolTaskExecutor taskExecutor = (ThreadPoolTaskExecutor) applicationContext.getBean("taskExecutor");
         for (int i = 0; i < FilterConstraints.LSPS.length; i++) {
-//            for (int j = 0; j < 5; j++) {
-                LspMailService businessEmailService = (LspMailService) applicationContext.getBean("lspMailService");
-                businessEmailService.setPage(0);
-                businessEmailService.setSize(1000);
-                businessEmailService.setType(FilterConstraints.LSPS[i]);
-                try {
-                    taskExecutor.submit(businessEmailService);
-                    Thread.sleep(4000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                int count = taskExecutor.getActiveCount();
-                if (count == 0) {
-                    System.out.println("Killed all Thread In Lsp Mail");
-                }
-//            }
+            LspMailService businessEmailService = (LspMailService) applicationContext.getBean("lspMailService");
+            businessEmailService.setSize(1000);
+            businessEmailService.setType(FilterConstraints.LSPS[i]);
+            Thread thread = new Thread(businessEmailService);
+            thread.start();
         }
     }
 
     @GetMapping("/others-mail")
-    public void filterOthersMail() {
+    public void filterOthersMail() throws InterruptedException {
         System.out.println("Staring filter others mail");
-        ThreadPoolTaskExecutor taskExecutor = (ThreadPoolTaskExecutor) applicationContext.getBean("taskExecutor");
-//        ExecutorService executor = Executors.newFixedThreadPool(FilterConstraints.OTHERS.length);
         for (int i = 0; i < FilterConstraints.OTHERS.length; i++) {
-//            for (int j = 0; j < NUM_OF_THREAD; j++) {
-                OthersMailService businessEmailService = (OthersMailService) applicationContext.getBean("othersMailService");
-                businessEmailService.setPage(0);
-                businessEmailService.setSize(1000);
-                businessEmailService.setType(FilterConstraints.OTHERS[i]);
-                try {
-                    taskExecutor.submit(businessEmailService);
-                    Thread.sleep(5000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-//                int count = taskExecutor.getActiveCount();
-//                if (count == 0) {
-//                    System.out.println("Killed all Thread In Others Mail");
-//                }
-//            }
+            OthersMailService businessEmailService = (OthersMailService) applicationContext.getBean("othersMailService");
+            businessEmailService.setSize(SIZE);
+            businessEmailService.setType(FilterConstraints.OTHERS[i]);
+            Thread thread = new Thread(businessEmailService);
+            thread.start();
+            Thread.sleep(1000);
         }
     }
 
     @GetMapping("/role-mail")
     public void filterRoleMail() {
         System.out.println("Staring filter role mail");
-        ThreadPoolTaskExecutor taskExecutor = (ThreadPoolTaskExecutor) applicationContext.getBean("taskExecutor");
         for (int i = 0; i < FilterConstraints.ROLES.length; i++) {
-//            for (int j = 0; j < 5; j++) {
-                RoleMailService businessEmailService = (RoleMailService) applicationContext.getBean("roleMailService");
-                businessEmailService.setPage(0);
-                businessEmailService.setSize(1000);
-                businessEmailService.setType(FilterConstraints.ROLES[i]);
-                try {
-                    taskExecutor.submit(businessEmailService);
-                    Thread.sleep(4000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                int count = taskExecutor.getActiveCount();
-                if (count == 0) {
-                    System.out.println("Killed all Thread In Role Mail");
-                }
-//            }
+            RoleMailService businessEmailService = (RoleMailService) applicationContext.getBean("roleMailService");
+            businessEmailService.setSize(SIZE);
+            businessEmailService.setType(FilterConstraints.ROLES[i]);
+            Thread thread = new Thread(businessEmailService);
+            thread.start();
         }
     }
 
     @GetMapping("/vietnam-mail")
     public void filterVietnamMail() {
         System.out.println("Staring filter vietnam mail");
-        ThreadPoolTaskExecutor taskExecutor = (ThreadPoolTaskExecutor) applicationContext.getBean("taskExecutor");
         for (int i = 0; i < FilterConstraints.VIETNAMS.length; i++) {
-//            for (int j = 0; j < 5; j++) {
-                VietnamMailService businessEmailService = (VietnamMailService) applicationContext.getBean("vietnamMailService");
-                businessEmailService.setPage(0);
-                businessEmailService.setSize(1000);
-                businessEmailService.setType(FilterConstraints.VIETNAMS[i]);
-                try {
-                    taskExecutor.submit(businessEmailService);
-                    Thread.sleep(4000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                int count = taskExecutor.getActiveCount();
-                if (count == 0) {
-                    System.out.println("Killed all Thread In VIETNAM Mail");
-                }
-//            }
+            VietnamMailService businessEmailService = (VietnamMailService) applicationContext.getBean("vietnamMailService");
+            businessEmailService.setSize(SIZE);
+            businessEmailService.setType(FilterConstraints.VIETNAMS[i]);
+            Thread thread = new Thread(businessEmailService);
+            thread.start();
         }
     }
 
     @GetMapping("/yahoo-mail")
     public void filterYahooMail() {
         System.out.println("Staring filter yahoo mail");
-        ThreadPoolTaskExecutor taskExecutor = (ThreadPoolTaskExecutor) applicationContext.getBean("taskExecutor");
         for (int i = 0; i < FilterConstraints.YAHOOS.length; i++) {
-//            for (int j = 0; j < 5; j++) {
-                YahooMailService businessEmailService = (YahooMailService) applicationContext.getBean("yahooMailService");
-                businessEmailService.setPage(0);
-                businessEmailService.setSize(1000);
-                businessEmailService.setType(FilterConstraints.YAHOOS[i]);
-                try {
-                    taskExecutor.submit(businessEmailService);
-                    Thread.sleep(500);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-//                int count = taskExecutor.getActiveCount();
-//                if (count == 0) {
-//                    System.out.println("Killed all Thread In Yahoo Mail");
-//                }
-//            }
+            YahooMailService businessEmailService = (YahooMailService) applicationContext.getBean("yahooMailService");
+            businessEmailService.setSize(1000);
+            businessEmailService.setType(FilterConstraints.YAHOOS[i]);
+            Thread thread = new Thread(businessEmailService);
+            thread.start();
         }
     }
 
     @GetMapping("/autoFilter")
-    public void autoDecisionFilter() {
+    public void autoDecisionFilter() throws InterruptedException {
         Pageable pageable = PageRequest.of(0, 5);
         Page<IdEmail> idEmailPage = emailRepo.findAll(pageable);
         String mailToFilter = null;

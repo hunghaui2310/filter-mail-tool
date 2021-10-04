@@ -1,7 +1,10 @@
 package com.saltlux.tool.filter.tool;
 
 import com.saltlux.tool.filter.tool.controller.ExecutorController;
+import com.saltlux.tool.filter.tool.controller.FilterAllMailController;
 import com.saltlux.tool.filter.tool.controller.TestController;
+import com.saltlux.tool.filter.tool.service.FilterAllMailService;
+import com.saltlux.tool.filter.tool.service.SaveAllService;
 import com.saltlux.tool.filter.tool.util.AppUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -16,6 +19,12 @@ public class ScheduleTask {
     @Autowired
     private ExecutorController executorController;
 
+    @Autowired
+    private FilterAllMailController filterAllMailController;
+
+    @Autowired
+    private FilterAllMailService filterAllMailService;
+
 //    @Scheduled(fixedRate = 50000)
 //    public void scheduleTaskWithAppleMail() {
 //        System.out.println("Starting Schedule Apple Mail");
@@ -25,8 +34,8 @@ public class ScheduleTask {
 //            System.out.println("Da xay ra loi " + e.getMessage());
 //        }
 //    }
-
-//    @Scheduled(fixedRate = 300000)
+//
+//    @Scheduled(fixedRate = 180000)
 //    public void scheduleTaskWithGmail() {
 //        System.out.println("======================= Starting Schedule Gmail");
 //        try {
@@ -35,8 +44,8 @@ public class ScheduleTask {
 //            System.out.println("Da xay ra loi " + e.getMessage());
 //        }
 //    }
-
-//    @Scheduled(fixedRate = 600000) // ten minutes
+//
+//    @Scheduled(fixedRate = 300000) // ten minutes
 //    public void scheduleTaskWithGovMail() {
 //        System.out.println("=================== Starting Schedule Gov Mail");
 //        try {
@@ -45,7 +54,7 @@ public class ScheduleTask {
 //            System.out.println("Da xay ra loi " + e.getMessage());
 //        }
 //    }
-
+//
 //    @Scheduled(fixedRate = 120000)
 //    public void scheduleTaskWithInvalidMail() {
 //        System.out.println("Starting Schedule Invalid Mail");
@@ -65,7 +74,7 @@ public class ScheduleTask {
 //            System.out.println("Da xay ra loi " + e.getMessage());
 //        }
 //    }
-
+//
 //    @Scheduled(fixedRate = 1800000)
 //    public void scheduleTaskWithOthersMail() {
 //        System.out.println("======================Starting Schedule Others Mail");
@@ -75,7 +84,7 @@ public class ScheduleTask {
 //            System.out.println("Da xay ra loi " + e.getMessage());
 //        }
 //    }
-
+//
 //    @Scheduled(fixedRate = 120000)
 //    public void scheduleTaskWithVietnamMail() {
 //        System.out.println("Starting Schedule Vietnam Mail");
@@ -95,7 +104,7 @@ public class ScheduleTask {
 //            System.out.println("Da xay ra loi " + e.getMessage());
 //        }
 //    }
-
+//
 //    @Scheduled(fixedRate = 120000)
 //    public void scheduleTaskWithBusinessMail() {
 //        if (!AppUtil.hasThreadBusiness()) {
@@ -108,7 +117,7 @@ public class ScheduleTask {
 //        }
 //    }
 
-//    @Scheduled(fixedRate = 90000)
+//    @Scheduled(fixedRate = 120000)
 //    public void scheduleTaskAuto() {
 //        if (!AppUtil.hasThreadExecutor()) {
 //            System.out.println("==================Starting Schedule Auto Detect Mail");
@@ -130,5 +139,11 @@ public class ScheduleTask {
 //                System.out.println("Da xay ra loi " + e.getMessage());
 //            }
 //        }
+//    }
+
+//    @Scheduled(fixedRate = 12000)
+//    public void call() throws InterruptedException {
+//        testController.filterBusinessMail();
+//        filterAllMailService.deleteAfterFilter();
 //    }
 }

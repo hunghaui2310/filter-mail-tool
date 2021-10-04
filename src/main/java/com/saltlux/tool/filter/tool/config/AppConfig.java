@@ -1,11 +1,14 @@
 package com.saltlux.tool.filter.tool.config;
 
+import org.modelmapper.AbstractConverter;
+import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
-import org.thymeleaf.templatemode.TemplateMode;
-import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
+import org.apache.poi.ss.formula.functions.T;
+import java.util.List;
 
 @Configuration
 public class AppConfig {
@@ -33,33 +36,25 @@ public class AppConfig {
         return new ModelMapper();
     }
 
-    @Bean
-    public ClassLoaderTemplateResolver secondaryTemplateResolver() {
-        ClassLoaderTemplateResolver secondaryTemplateResolver = new ClassLoaderTemplateResolver();
-        secondaryTemplateResolver.setPrefix("templates-2/");
-        secondaryTemplateResolver.setSuffix(".html");
-        secondaryTemplateResolver.setTemplateMode(TemplateMode.HTML);
-        secondaryTemplateResolver.setCharacterEncoding("UTF-8");
-        secondaryTemplateResolver.setOrder(1);
-        secondaryTemplateResolver.setCheckExistence(true);
-
-        return secondaryTemplateResolver;
-    }
-
 //    @Bean
-//    public DataSource dataSource(){
-//        System.out.println(driverClass+" "+ url+" "+username+" "+password);
-//        DriverManagerDataSource source = new DriverManagerDataSource();
-//        source.setDriverClassName(driverClass);
-//        source.setUrl(url);
-//        source.setUsername(username);
-//        source.setPassword(password);
-//        return source;
-//    }
+//    public ModelMapper modelMapperToString() {
 //
-//    @Bean
-//    public NamedParameterJdbcTemplate namedParameterJdbcTemplate(){
-//        NamedParameterJdbcTemplate namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(this.dataSource());
-//        return namedParameterJdbcTemplate;
+//        Converter<List<T>, String> toObjectId = new AbstractConverter<List<T>, String>() {
+//            protected String convert(String source) {
+//                return source == null ? null : new String(source);
+//            }
+//        };
+//
+//        TypeMap<EventMessageModel, Message> typeMap1 = modelMapper.createTypeMap(EventMessageModel.class, Message.class);
+//        typeMap1.addMappings(mapper -> {
+//            mapper.using(toObjectId)
+//                    .map(EventMessageModel::getToUserId, Message::setToUserId);
+//
+//            mapper.using(toObjectId)
+//                    .map(EventMessageModel::getFromUserId, Message::setFromUserId);
+//
+//        });
+//
+//        return modelMapper;
 //    }
 }

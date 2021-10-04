@@ -1,11 +1,13 @@
-package com.saltlux.tool.filter.tool.model;
+package com.saltlux.tool.filter.tool.dto;
 
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
-public class LinkedInAccount {
+public class LinkedInAccountDto {
 
     private String id;
     private String full_name;
@@ -32,7 +34,7 @@ public class LinkedInAccount {
     private String job_title;
     private String job_title_role;
     private String job_title_sub_role;
-    private String job_title_levels;
+    private List<String> job_title_levels;
     private String job_company_id;
     private String job_company_name;
     private String job_company_website;
@@ -71,18 +73,18 @@ public class LinkedInAccount {
     private String inferred_salary;
     private String inferred_years_experience;
     private String summary;
-    private String phone_numbers;
-    private String emails;
-    private String interests;
-    private String skills;
-    private String location_names;
-    private String regions;
-    private String countries;
-    private String street_addresses;
-    private String experience;
-    private String education;
-    private String profiles;
-    private String certifications;
-    private String languages;
-    private String version_status;
+    private List<String> phone_numbers;
+    private List<Object> emails;
+    private List<String> interests;
+    private List<String> skills;
+    private List<String> location_names;
+    private List<String> regions;
+    private List<String> countries;
+    private List<Object> street_addresses;
+    private List<Object> experience;
+    private List<Object> education;
+    private List<Object> profiles;
+    private List<Object> certifications;
+    private List<Object> languages;
+    private Object version_status;
 }
