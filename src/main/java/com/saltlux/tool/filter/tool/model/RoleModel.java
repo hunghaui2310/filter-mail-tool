@@ -4,6 +4,6 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "tbl_role_email")
+@Table(name = "tbl_role_mail")
 public class RoleModel extends BaseModel {
 }

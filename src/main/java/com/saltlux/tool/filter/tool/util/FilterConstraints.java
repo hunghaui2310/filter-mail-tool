@@ -2,20 +2,32 @@ package com.saltlux.tool.filter.tool.util;
 
 public interface FilterConstraints {
 
+    enum MailType {
+        YAHOO, GMAIL, APPLE, OTHER, ROLE, INVALID, VIETNAM, LSP, GOV, ORG, EDU, SALTLUX
+    }
+
     String[] YAHOOS = new String[]{YAHOO_MAIL.YAHOO, YAHOO_MAIL.YMAIL};
     String[] GMAILS = new String[]{GMAIL.GMAIL, GMAIL.GOOGLE_GMAIL};
     String[] APPLES = new String[]{APPLE.ICLOUD, APPLE.APPLE, APPLE.MAC, APPLE.ME};
     String[] OTHERS = new String[]{OTHER.MICROSOFT, OTHER.WINDOWS_LIVE, OTHER.OUTLOOK, OTHER.LIVE,
                     OTHER.MSN, OTHER.GO, OTHER.AOL, OTHER.INBOX, OTHER.EMAIL, OTHER.MAIL, OTHER.HOTMAIL, OTHER.QQ, OTHER.REDIFF_MAIL,
-                    OTHER.Q, OTHER.GMX, OTHER.ZOHO, OTHER.YANDEX, OTHER.MY_SPACE, OTHER.COX};
+                    OTHER.Q, OTHER.GMX, OTHER.ZOHO, OTHER.YANDEX, OTHER.MY_SPACE, OTHER.COX, OTHER._126_COM, OTHER.HANMAIL, OTHER.DOMAIN,
+                    OTHER.EARTH_LINK, OTHER._139_COM, OTHER._163_COM, OTHER.VERIZON, OTHER.FREE_MAIL, OTHER.MY_NET, OTHER.SBC_GLOBAL,
+                    OTHER.NAVER, OTHER.DAUM, OTHER.AIM, OTHER.VODAFONE, OTHER.JUNO, OTHER.CHARTER, OTHER.SPECTRUM, OTHER.MYWAY, OTHER.CS};
     String[] ROLES = new String[]{ROLE.INFO, ROLE.ADMIN, ROLE.ADMINISTRATOR, ROLE.ADMINISTRATION,
                     ROLE.MARKETING, ROLE.ACCOUNTS, ROLE.ACCOUNT, ROLE.HR, ROLE.MANAGER, ROLE.MAIL, ROLE.EMAIL, ROLE.INBOX, ROLE.SUPPORT,
                     ROLE.NEWS};
-    String[] INVALIDS = new String[]{INVALID.PORN, INVALID.SEX, INVALID.NAVY, INVALID.USCG, INVALID.USAF,
-                    INVALID.USMC, INVALID.POLICE, INVALID.FBI, INVALID.CIA};
+    String[] INVALIDS = new String[]{INVALID.PORN, INVALID.SEX, INVALID.NAVY_MIL, INVALID.USCG_MIL, INVALID.US_AF_MIL,
+                    INVALID.USMC_MIL, INVALID.POLICE, INVALID.FBI, INVALID.CIA, INVALID.PLAYBOY, INVALID.MURDER, INVALID.HOMICIDE,
+                    INVALID.SUICIDE, INVALID.VIRGIN, INVALID.MUSLIM, INVALID.VOILA};
     String[] VIETNAMS = new String[]{VIETNAM.VN};
     String[] LSPS = new String[]{LSP.TRANSLATION, LSP.LOCALIZE, LSP.LOCALIZATION, LSP.TRANSLATE, LSP.TRANSLATOR};
-    String[] GOVS = new String[]{GOV.GOV, GOV.NATION};
+    String[] GOVS = new String[]{GOV.GOV};
+    String[] ORGS = new String[]{ORG.ORG};
+    String[] EDUS = new String[]{EDU.EDU, EDU.EDUCATION, EDU.SCHOOL, EDU.UNIVERSITY, EDU.COLLEGE, EDU.STUDENT, EDU.VIN_SCHOOL, EDU.LEARN,
+                    EDU.STUDY, EDU.OXFORD, EDU.CAMBRIDGE, EDU.HARVARD, EDU.YALE, EDU.ALUMNI, EDU.TEACH, EDU.TRAINING, EDU.DAYCARE, EDU.KINDERGARTEN};
+    String[] SALTLUXS = new String[]{SALTLUX.SALTLUX};
+
     String[] BUSINESS_GLOBALS = new String[]{BUSINESS_GLOBAL.GLOBAL, BUSINESS_GLOBAL.UNIVERSAL, BUSINESS_GLOBAL.GLOBE, BUSINESS_GLOBAL.WORLD_WIDE,
             BUSINESS_GLOBAL.WORLD, BUSINESS_GLOBAL.INTERNATIONAL, BUSINESS_GLOBAL.MULTINATIONAL, BUSINESS_GLOBAL.NATION_WIDE, BUSINESS_GLOBAL.COCA_COLA,
             BUSINESS_GLOBAL.DHL, BUSINESS_GLOBAL.KINDLE, BUSINESS_GLOBAL.LEGO, BUSINESS_GLOBAL.BOOKING_COM, BUSINESS_GLOBAL.LOTTE, BUSINESS_GLOBAL.NIKON,
@@ -89,6 +101,25 @@ public interface FilterConstraints {
         String YANDEX = "@yandex.";
         String MY_SPACE = "@myspace";
         String COX = "@cox.net";
+        String _126_COM = "@126.com";
+        String HANMAIL = "@hanmail.";
+        String DOMAIN = "@domain";
+        String EARTH_LINK = "@earthlink";
+        String _139_COM = "@139.com";
+        String _163_COM = "@163.com";
+        String VERIZON = "@verizon.net";
+        String FREE_MAIL = "@freemail.";
+        String MY_NET = "@mynet.";
+        String SBC_GLOBAL = "@sbcglobal.net";
+        String NAVER = "@naver.com";
+        String DAUM = "@daum.";
+        String AIM = "@aim.com";
+        String VODAFONE = "@vodafone.com";
+        String JUNO = "@juno.com";
+        String CHARTER = "@charter.net";
+        String SPECTRUM = "@spectrum.net";
+        String MYWAY = "@myway.com";
+        String CS = "@cs.com";
     }
 
     interface ROLE {
@@ -111,13 +142,20 @@ public interface FilterConstraints {
     interface INVALID {
         String PORN = "porn";
         String SEX = "sex";
-        String NAVY = "navy.mil";
-        String USCG = "uscg.mil";
-        String USAF = "us.af.mil";
-        String USMC = "usmc.mil";
+        String NAVY_MIL = "navy.mil";
+        String USCG_MIL = "uscg.mil";
+        String US_AF_MIL = "us.af.mil";
+        String USMC_MIL = "usmc.mil";
         String POLICE = "police.";
         String FBI = "fbi.";
         String CIA = "@cia.gov";
+        String PLAYBOY = "playboy";
+        String MURDER = "murder";
+        String HOMICIDE = "homicide";
+        String SUICIDE = "suicide";
+        String VIRGIN = "virgin";
+        String MUSLIM = "muslim";
+        String VOILA = "@voila.fr";
     }
 
     interface VIETNAM {
@@ -135,7 +173,36 @@ public interface FilterConstraints {
 
     interface GOV {
         String GOV = ".gov";
-        String NATION = "national";
+//        String NATION = "national";
+    }
+
+    interface ORG {
+        String ORG = ".org";
+    }
+
+    interface EDU {
+        String EDU = ".edu";
+        String EDUCATION = "education";
+        String SCHOOL = "school";
+        String UNIVERSITY = "university";
+        String COLLEGE = "college";
+        String STUDENT = "student";
+        String VIN_SCHOOL = "vinschool";
+        String LEARN = "learn";
+        String STUDY  = "study ";
+        String OXFORD = "oxford";
+        String CAMBRIDGE = "cambridge";
+        String HARVARD = "harvard";
+        String YALE = "yale";
+        String ALUMNI = "alumni";
+        String TEACH = "teach";
+        String TRAINING = "training";
+        String DAYCARE = "daycare";
+        String KINDERGARTEN = "kindergarten";
+    }
+
+    interface SALTLUX {
+        String SALTLUX = "@saltlux.com";
     }
 
     interface BUSINESS_GLOBAL {

@@ -4,6 +4,6 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "tbl_business_hotel_mail")
+@Table(name = "tbl_business_law_mail")
 public class BusinessLawModel extends BaseModel {
 }

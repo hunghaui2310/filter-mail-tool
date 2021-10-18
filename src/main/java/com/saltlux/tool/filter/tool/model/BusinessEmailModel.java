@@ -6,7 +6,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "tbl_business_email")
+@Table(name = "tbl_business_mail")
 public class BusinessEmailModel {
 
     @Id

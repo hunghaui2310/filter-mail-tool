@@ -4,7 +4,6 @@ import com.saltlux.tool.filter.tool.model.*;
 import com.saltlux.tool.filter.tool.repo.*;
 import com.saltlux.tool.filter.tool.util.AppUtil;
 import com.saltlux.tool.filter.tool.util.BusinessMailType;
-import com.saltlux.tool.filter.tool.util.FilterConstraints;
 import com.saltlux.tool.filter.tool.util.FilterUtil;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,19 +13,14 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.util.*;
-import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -39,6 +33,8 @@ public class BusinessEmailService implements Runnable, IFilterService {
     private Integer size;
     private String type;
     private List<BusinessEmailModel> businessEmailModels = new LinkedList<>();
+    private List<? extends BaseModel> baseModels = new ArrayList<>();
+    private List<BaseModel> baseModelsToDelete;
 //    private List<BusinessEmailModel> businessEmailModelsRest = new LinkedList<>();
 
     private EmailRepo emailRepo;
@@ -146,7 +142,7 @@ public class BusinessEmailService implements Runnable, IFilterService {
 
     @Override
     public void run() {
-        filterFromBusiness(this.businessEmailModels);
+        filterFromBusiness(this.baseModels);
     }
 
     public long countAll() {
@@ -168,48 +164,74 @@ public class BusinessEmailService implements Runnable, IFilterService {
     }
 
     @Transactional(dontRollbackOn = Exception.class)
-    public void filterFromBusiness(List<BusinessEmailModel> businessEmailModels) {
-        List<BusinessEmailModel> listAfterFilterMedia = filterBusinessByType(businessEmailModels, BusinessMailType.MEDIA);
-        List<BusinessEmailModel> listAfterFilterHotel = filterBusinessByType(listAfterFilterMedia, BusinessMailType.HOTEL);
-        List<BusinessEmailModel> listAfterFilterFashion = filterBusinessByType(listAfterFilterHotel, BusinessMailType.FASHION);
-        List<BusinessEmailModel> listAfterFilterLaw = filterBusinessByType(listAfterFilterFashion, BusinessMailType.LAW);
-        List<BusinessEmailModel> listAfterFilterHealthCare = filterBusinessByType(listAfterFilterLaw, BusinessMailType.HEALTH_CARE);
-        List<BusinessEmailModel> listAfterFilterGlobal = filterBusinessByType(listAfterFilterHealthCare, BusinessMailType.GLOBAL);
-        List<BusinessEmailModel> listAfterFilterAutomotive = filterBusinessByType(listAfterFilterGlobal, BusinessMailType.AUTOMOTIVE);
-        List<BusinessEmailModel> listAfterFilterBanking = filterBusinessByType(listAfterFilterAutomotive, BusinessMailType.BANKING);
-        List<BusinessEmailModel> listAfterFilterTech = filterBusinessByType(listAfterFilterBanking, BusinessMailType.TECH);
-        if (Objects.nonNull(listAfterFilterTech) && listAfterFilterTech.size() > 0) {
-            Map<Boolean, List<BusinessEmailModel>> numbersByIsPositive = listAfterFilterTech.stream()
-                    .collect(Collectors.groupingBy(mail -> (Objects.nonNull(mail.getMemberPrimaryEmail()) && FilterUtil.filterLSPMail(mail.getMemberPrimaryEmail()))));
-            List<BusinessEmailModel> businessEmailModelsLsp = numbersByIsPositive.get(true);
-            if (Objects.nonNull(businessEmailModelsLsp) && businessEmailModelsLsp.size() > 0) {
-                List<LspModel> lspModels = AppUtil.mapAll(businessEmailModelsLsp, LspModel.class);
-                lspRepo.saveAll(lspModels);
-            }
-            List<BusinessEmailModel> businessEmailModelRest = numbersByIsPositive.get(false);
-            if (Objects.nonNull(businessEmailModelRest) && businessEmailModelRest.size() > 0) {
-                List<IdEmail> idEmailList = AppUtil.mapAll(businessEmailModelRest, IdEmail.class);
-                emailRepo.saveAll(idEmailList);
-            }
+    public synchronized void filterFromBusiness(List<? extends BaseModel> businessEmailModels) {
+        if (businessEmailModels.size() == 0 || Objects.isNull(businessEmailModels)) {
+            return;
         }
+        this.baseModelsToDelete = new ArrayList<>();
+        List<? extends BaseModel> baseModelsOut = null;
+        if (!(businessEmailModels.get(0) instanceof BusinessLawModel)) {
+            baseModelsOut = filterBusinessByType(businessEmailModels, BusinessMailType.LAW);
+        }
+        if (!(businessEmailModels.get(0) instanceof BusinessBankingModel)) {
+            baseModelsOut = filterBusinessByType(baseModelsOut, BusinessMailType.BANKING);
+        }
+        if (!(businessEmailModels.get(0) instanceof BusinessTechModel)) {
+            baseModelsOut = filterBusinessByType(baseModelsOut, BusinessMailType.TECH);
+        }
+        if (!(businessEmailModels.get(0) instanceof BusinessAutomotiveModel)) {
+            baseModelsOut = filterBusinessByType(baseModelsOut, BusinessMailType.AUTOMOTIVE);
+        }
+        if (!(businessEmailModels.get(0) instanceof BusinessHealthCareModel)) {
+            baseModelsOut = filterBusinessByType(baseModelsOut, BusinessMailType.HEALTH_CARE);
+        }
+        if (!(businessEmailModels.get(0) instanceof BusinessMediaModel)) {
+            baseModelsOut = filterBusinessByType(baseModelsOut, BusinessMailType.MEDIA);
+        }
+        if (!(businessEmailModels.get(0) instanceof BusinessGlobalModel)) {
+            baseModelsOut = filterBusinessByType(baseModelsOut, BusinessMailType.GLOBAL);
+        }
+        if (!(businessEmailModels.get(0) instanceof BusinessHotelModel)) {
+            baseModelsOut = filterBusinessByType(baseModelsOut, BusinessMailType.HOTEL);
+        }
+        if (!(businessEmailModels.get(0) instanceof BusinessFashionModel)) {
+            baseModelsOut = filterBusinessByType(baseModelsOut, BusinessMailType.FASHION);
+        }
+//        if (Objects.nonNull(listAfterFilterFashion) && listAfterFilterFashion.size() > 0) {
+//            businessEmailModels.removeAll(listAfterFilterFashion);
+//            Map<Boolean, List<BusinessEmailModel>> numbersByIsPositive = listAfterFilterFashion.stream()
+//                    .collect(Collectors.groupingBy(mail -> (Objects.nonNull(mail.getMemberPrimaryEmail()) && FilterUtil.filterLSPMail(mail.getMemberPrimaryEmail()))));
+//            List<BusinessEmailModel> businessEmailModelsLsp = numbersByIsPositive.get(true);
+//            if (Objects.nonNull(businessEmailModelsLsp) && businessEmailModelsLsp.size() > 0) {
+//                List<LspModel> lspModels = AppUtil.mapAll(businessEmailModelsLsp, LspModel.class);
+//                lspRepo.saveAll(lspModels);
+//            }
+//            List<BusinessEmailModel> businessEmailModelRest = numbersByIsPositive.get(false);
+//            if (Objects.nonNull(businessEmailModelRest) && businessEmailModelRest.size() > 0) {
+//                List<IdEmail> idEmailList = AppUtil.mapAll(businessEmailModelRest, IdEmail.class);
+//                emailRepo.saveAll(idEmailList);
+//            }
+//        }
 //        System.out.println("Total mail to delete: " + this.businessEmailModelsRest.size() + " in thread: " + Thread.currentThread().getName());
-        businessEmailRepo.deleteAllByIdInBatch(businessEmailModels.stream().map(BusinessEmailModel::getMemberId).collect(Collectors.toList()));
+//        businessEmailRepo.deleteAllByIdInBatch(businessEmailModels.stream().map(BusinessEmailModel::getMemberId).collect(Collectors.toList()));
+        deleteByType(businessEmailModels);
         System.out.println("Done filter in Thread: " + Thread.currentThread().getName());
     }
 
     @Transactional(dontRollbackOn = Exception.class)
-    public List<BusinessEmailModel> filterBusinessByType(List<BusinessEmailModel> businessEmailModels, BusinessMailType businessMailType) {
+    public List<? extends BaseModel> filterBusinessByType(List<? extends BaseModel> businessEmailModels, BusinessMailType businessMailType) {
         if (Objects.isNull(businessEmailModels) || businessEmailModels.size() == 0) {
             return null;
         }
-        Map<Boolean, List<BusinessEmailModel>> numbersByIsPositive = businessEmailModels.stream()
+        Map<Boolean, List<BaseModel>> numbersByIsPositive = businessEmailModels.stream()
                 .collect(Collectors.groupingBy(mail -> (Objects.nonNull(mail.getMemberPrimaryEmail()) && FilterUtil.filterBusinessByType(mail.getMemberPrimaryEmail(), businessMailType))));
-        List<BusinessEmailModel> idEmailsOut = numbersByIsPositive.get(true);
+        List<BaseModel> idEmailsOut = numbersByIsPositive.get(true);
         if (Objects.nonNull(idEmailsOut) && idEmailsOut.size() > 0) {
+            this.baseModelsToDelete.addAll(idEmailsOut);
             switch (businessMailType) {
                 case GLOBAL:
-                    List<BusinessGlobalModel> globalModels = AppUtil.mapAll(idEmailsOut, BusinessGlobalModel.class);
-                    businessGlobalMailRepo.saveAll(globalModels);
+                    List<BusinessGlobalModel> businessGlobalModels = AppUtil.mapAll(idEmailsOut, BusinessGlobalModel.class);
+                    businessGlobalMailRepo.saveAll(businessGlobalModels);
                     break;
                 case MEDIA:
                     List<BusinessMediaModel> mediaModels = AppUtil.mapAll(idEmailsOut, BusinessMediaModel.class);
@@ -247,5 +269,31 @@ public class BusinessEmailService implements Runnable, IFilterService {
 //            this.businessEmailModelsRest.addAll(idEmailsOut);
         }
         return numbersByIsPositive.get(false);
+    }
+
+    @Transactional(dontRollbackOn = Exception.class)
+    public void deleteByType(List<? extends BaseModel> baseModels) {
+        List<String> ids = baseModelsToDelete.stream().map(BaseModel::getMemberId).collect(Collectors.toList());
+        if (ids.size() > 0) {
+            if (baseModels.get(0) instanceof BusinessAutomotiveModel) {
+                businessAutomotiveMailRepo.deleteAllByIdInBatch(ids);
+            } else if (baseModels.get(0) instanceof BusinessBankingModel) {
+                businessBankingMailRepo.deleteAllByIdInBatch(ids);
+            } else if (baseModels.get(0) instanceof BusinessFashionModel) {
+                businessFashionMailRepo.deleteAllByIdInBatch(ids);
+            } else if (baseModels.get(0) instanceof BusinessGlobalModel) {
+                businessGlobalMailRepo.deleteAllByIdInBatch(ids);
+            } else if (baseModels.get(0) instanceof BusinessHealthCareModel) {
+                businessHealthCareMailRepo.deleteAllByIdInBatch(ids);
+            } else if (baseModels.get(0) instanceof BusinessHotelModel) {
+                businessHotelMailRepo.deleteAllByIdInBatch(ids);
+            } else if (baseModels.get(0) instanceof BusinessLawModel) {
+                businessLawMailRepo.deleteAllByIdInBatch(ids);
+            } else if (baseModels.get(0) instanceof BusinessMediaModel) {
+                businessMediaMailRepo.deleteAllByIdInBatch(ids);
+            } else if (baseModels.get(0) instanceof BusinessTechModel) {
+                businessTechMailRepo.deleteAllByIdInBatch(ids);
+            }
+        }
     }
 }

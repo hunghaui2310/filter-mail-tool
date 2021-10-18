@@ -4,6 +4,6 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "tbl_lsp_email")
+@Table(name = "tbl_lsp_mail")
 public class LspModel extends BaseModel {
 }

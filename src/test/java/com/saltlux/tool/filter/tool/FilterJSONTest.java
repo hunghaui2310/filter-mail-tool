@@ -1,5 +1,6 @@
 package com.saltlux.tool.filter.tool;
 
+import com.saltlux.tool.filter.tool.controller.FilterAgainController;
 import com.saltlux.tool.filter.tool.controller.IndexController;
 import com.saltlux.tool.filter.tool.service.EmailService;
 import com.saltlux.tool.filter.tool.service.FilterJSONService;
@@ -20,11 +21,19 @@ public class FilterJSONTest {
     private IndexController indexController;
 
     @Autowired
+    private FilterAgainController filterAgainController;
+
+    @Autowired
     private EmailService emailService;
 
     @Test
     public void testFilter() throws IOException {
 //        indexController.testFilter();
         emailService.saveToBusiness();
+    }
+
+    @Test
+    public void filterAgain() {
+        filterAgainController.filterAgainHotel();
     }
 }

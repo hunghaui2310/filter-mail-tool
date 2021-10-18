@@ -11,7 +11,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "tbl_others_email")
+@Table(name = "tbl_others_mail")
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter

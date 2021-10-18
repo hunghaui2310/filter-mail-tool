@@ -4,6 +4,6 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "tbl_vietnam_email")
+@Table(name = "tbl_vietnam_mail")
 public class VietnamModel extends BaseModel {
 }

@@ -4,6 +4,6 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "tbl_gov_email")
+@Table(name = "tbl_gov_mail")
 public class GovModel extends BaseModel {
 }

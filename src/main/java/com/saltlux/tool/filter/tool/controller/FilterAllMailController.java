@@ -35,14 +35,14 @@ public class FilterAllMailController {
 
     @GetMapping("/filter")
     public void filterAllMail(@RequestParam(value = "size", defaultValue = "10000", required = false) Integer size) throws InterruptedException {
-//        ThreadPoolTaskExecutor taskExecutor = (ThreadPoolTaskExecutor) applicationContext.getBean("taskExecutor");
-        ExecutorService executorService = Executors.newFixedThreadPool(NUM_OF_THREAD);
+        ThreadPoolTaskExecutor taskExecutor = (ThreadPoolTaskExecutor) applicationContext.getBean("taskExecutor");
+//        ExecutorService executorService = Executors.newFixedThreadPool(NUM_OF_THREAD);
         for (int i = 0; i < NUM_OF_THREAD; i++) {
             Pageable pageable = PageRequest.of(i, size);
             Page<IdEmail> idEmailPage = emailRepo.findAll(pageable);
             FilterAllMailService filterAllMailService = applicationContext.getBean(FilterAllMailService.class);
             filterAllMailService.setIdEmails(idEmailPage.getContent());
-            executorService.execute(filterAllMailService);
+            taskExecutor.execute(filterAllMailService);
 //            Thread.sleep(1000);
         }
 //        filterAllMailService.deleteAfterFilter();

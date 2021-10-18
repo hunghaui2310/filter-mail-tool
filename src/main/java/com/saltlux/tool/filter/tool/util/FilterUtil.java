@@ -78,6 +78,27 @@ public class FilterUtil {
         return checkWithOr(source, FilterConstraints.GOVS);
     }
 
+    public static boolean filterORGMail(String source) {
+        if (Objects.isNull(source)) {
+            return false;
+        }
+        return checkWithOr(source, FilterConstraints.ORGS);
+    }
+
+    public static boolean filterEduMail(String source) {
+        if (Objects.isNull(source)) {
+            return false;
+        }
+        return checkWithOr(source, FilterConstraints.EDUS);
+    }
+
+    public static boolean filterSaltluxMail(String source) {
+        if (Objects.isNull(source)) {
+            return false;
+        }
+        return checkWithOr(source, FilterConstraints.SALTLUXS);
+    }
+
     public static boolean filterBusinessGlobalMail(String source) {
         if (Objects.isNull(source)) {
             return false;
@@ -139,6 +160,41 @@ public class FilterUtil {
             return false;
         }
         return checkWithOr(source, FilterConstraints.BUSINESS_HEALTH_CARES);
+    }
+
+    public static boolean filterMailByType(String source, FilterConstraints.MailType mailType) {
+        if (Objects.isNull(source)) {
+            return false;
+        }
+        switch (mailType) {
+            case YAHOO:
+                return filterYahooMail(source);
+            case GMAIL:
+                return filterGmail(source);
+            case APPLE:
+                return filterAppleMail(source);
+            case OTHER:
+                return filterOtherMail(source);
+            case ROLE:
+                return filterRoleMail(source);
+            case INVALID:
+                return filterInvalidMail(source);
+            case VIETNAM:
+                return filterVietnamMail(source);
+            case LSP:
+                return filterLSPMail(source);
+            case GOV:
+                return filterGOVMail(source);
+            case ORG:
+                return filterORGMail(source);
+            case EDU:
+                return filterEduMail(source);
+            case SALTLUX:
+                return filterSaltluxMail(source);
+            default:
+                System.out.println("Type False. Filter Fail");
+                return false;
+        }
     }
 
     public static boolean filterBusinessByType(String source, BusinessMailType businessMailType) {

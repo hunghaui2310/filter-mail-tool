@@ -23,5 +23,8 @@ public class StatisticDto implements Serializable {
     private long roleMail;
     private long vietnamMail;
     private long yahooMail;
+    private long orgMail;
+    private long eduMail;
+    private long saltluxMail;
     private long totalMail;
 }
