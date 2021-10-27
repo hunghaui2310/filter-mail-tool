@@ -45,23 +45,23 @@ public class YahooMailService implements Runnable {
     @Deprecated
     @Transactional(dontRollbackOn = Exception.class)
     public void filter(int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
-        Page<IdEmail> idEmails = emailRepo.findAllByMemberPrimaryEmailIgnoreCaseContaining(pageable, type);
-        List<YahooMailModel> yahooMailModels = new ArrayList<>();
-        List<String> ids = new ArrayList<>();
-        for (int i = 0; i < idEmails.getTotalPages(); i++) {
-            String email = idEmails.getContent().get(i).getMemberPrimaryEmail();
-            String memberId = idEmails.getContent().get(i).getMemberId();
-            if (!Objects.isNull(email)) {
-                if (AppUtil.containIgnoreCase(email, "@yahoo") || AppUtil.containIgnoreCase(email, "@ymail")) {
-                    yahooMailModels.add(new YahooMailModel(memberId, email));
-                }
-            }
-            ids.add(memberId);
-        }
-        yahooEmailRepo.saveAll(yahooMailModels);
-        emailRepo.deleteAllByIdInBatch(ids);
-        System.out.println("Yahoo mail with concurrent task executor ============== DONE " + Thread.currentThread().getName());
+//        Pageable pageable = PageRequest.of(page, size);
+//        Page<IdEmail> idEmails = emailRepo.findAllByMemberPrimaryEmailIgnoreCaseContaining(pageable, type);
+//        List<YahooMailModel> yahooMailModels = new ArrayList<>();
+//        List<String> ids = new ArrayList<>();
+//        for (int i = 0; i < idEmails.getTotalPages(); i++) {
+//            String email = idEmails.getContent().get(i).getMemberPrimaryEmail();
+//            String memberId = idEmails.getContent().get(i).getMemberId();
+//            if (!Objects.isNull(email)) {
+//                if (AppUtil.containIgnoreCase(email, "@yahoo") || AppUtil.containIgnoreCase(email, "@ymail")) {
+//                    yahooMailModels.add(new YahooMailModel(memberId, email));
+//                }
+//            }
+//            ids.add(memberId);
+//        }
+//        yahooEmailRepo.saveAll(yahooMailModels);
+//        emailRepo.deleteAllByIdInBatch(ids);
+//        System.out.println("Yahoo mail with concurrent task executor ============== DONE " + Thread.currentThread().getName());
     }
 
     public synchronized void filterYahooMail() {

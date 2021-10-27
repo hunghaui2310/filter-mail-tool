@@ -28,4 +28,7 @@ public abstract class BaseModel implements Serializable {
 
     @Column(name = "MEMBER_PRIMARY_EMAIL")
     private String memberPrimaryEmail;
+
+    @Column(name = "MAIL_NAME")
+    private String mailName;
 }

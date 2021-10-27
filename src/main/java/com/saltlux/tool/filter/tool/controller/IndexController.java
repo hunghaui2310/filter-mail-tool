@@ -6,6 +6,7 @@ import com.saltlux.tool.filter.tool.model.*;
 import com.saltlux.tool.filter.tool.repo.*;
 import com.saltlux.tool.filter.tool.service.BusinessEmailService;
 import com.saltlux.tool.filter.tool.service.FilterJSONService;
+import com.saltlux.tool.filter.tool.service.FinalService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.data.domain.Page;
@@ -39,6 +40,7 @@ public class IndexController {
     private final OrgRepo orgRepo;
     private final EduRepo eduRepo;
     private final SaltluxRepo saltluxRepo;
+    private final TamRepo tamRepo;
 
     private final BusinessAutomotiveMailRepo businessAutomotiveMailRepo;
     private final BusinessBankingMailRepo businessBankingMailRepo;
@@ -51,7 +53,7 @@ public class IndexController {
     private final BusinessTechMailRepo businessTechMailRepo;
 
     private Integer START = 0;
-    private final Integer SIZE = 5000;
+    private final Integer SIZE = 50;
 
     @Autowired
     private ApplicationContext applicationContext;
@@ -64,7 +66,7 @@ public class IndexController {
                            BusinessFashionMailRepo businessFashionMailRepo, BusinessGlobalMailRepo businessGlobalMailRepo,
                            BusinessHealthCareMailRepo businessHealthCareMailRepo, BusinessHotelMailRepo businessHotelMailRepo,
                            BusinessLawMailRepo businessLawMailRepo, BusinessMediaMailRepo businessMediaMailRepo, BusinessTechMailRepo businessTechMailRepo,
-                           OrgRepo orgRepo, EduRepo eduRepo, SaltluxRepo saltluxRepo
+                           OrgRepo orgRepo, EduRepo eduRepo, SaltluxRepo saltluxRepo, TamRepo tamRepo
     ) {
         this.appleRepo = appleRepo;
         this.businessEmailRepo = businessEmailRepo;
@@ -89,10 +91,14 @@ public class IndexController {
         this.businessLawMailRepo = businessLawMailRepo;
         this.businessMediaMailRepo = businessMediaMailRepo;
         this.businessTechMailRepo = businessTechMailRepo;
+        this.tamRepo = tamRepo;
     }
 
     @Autowired
     private FilterJSONService filterJSONService;
+
+    @Autowired
+    private FinalService finalService;
 
     @RequestMapping("/statistic")
     public ResponseEntity<?> index() {
@@ -138,8 +144,16 @@ public class IndexController {
         }
     }
 
-    @GetMapping
-    public void saveAgainToBusinessMail() {
-
+    @GetMapping("/saveAgain")
+    public void saveAgain(@RequestParam int start, @RequestParam int size, @RequestParam int numOfThread) {
+        System.out.println("STARTING FILTER AGAIN MAIL");
+        ThreadPoolTaskExecutor taskExecutor = (ThreadPoolTaskExecutor) applicationContext.getBean("taskExecutor");
+        for (int i = start; i < start + numOfThread; i++) {
+            Pageable pageable = PageRequest.of(i, size);
+            Page<TamModel> idEmailPage = tamRepo.findAll(pageable);
+            FinalService finalService = applicationContext.getBean(FinalService.class);
+            finalService.setLstDataToSave(idEmailPage.getContent());
+            taskExecutor.execute(finalService);
+        }
     }
 }

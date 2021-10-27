@@ -34,8 +34,9 @@ public class FilterAllMailController {
     private final Integer NUM_OF_THREAD = 10;
 
     @GetMapping("/filter")
-    public void filterAllMail(@RequestParam(value = "size", defaultValue = "10000", required = false) Integer size) throws InterruptedException {
+    public void filterAllMail(@RequestParam(value = "size", defaultValue = "5000", required = false) Integer size) throws InterruptedException {
         ThreadPoolTaskExecutor taskExecutor = (ThreadPoolTaskExecutor) applicationContext.getBean("taskExecutor");
+        System.out.println("STARTING FILTER FIRST ===================");
 //        ExecutorService executorService = Executors.newFixedThreadPool(NUM_OF_THREAD);
         for (int i = 0; i < NUM_OF_THREAD; i++) {
             Pageable pageable = PageRequest.of(i, size);

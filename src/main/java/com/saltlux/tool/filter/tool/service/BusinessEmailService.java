@@ -92,24 +92,24 @@ public class BusinessEmailService implements Runnable, IFilterService {
 //                .filter(item -> Objects.nonNull(item.getMemberPrimaryEmail()) && FilterUtil.filterBusinessEmail(item.getMemberPrimaryEmail()))
 //                .collect(Collectors.toList());
 //        List<String> ids = businessEmailModels.stream().map(BusinessEmailModel::getMemberId).collect(Collectors.toList());
-        LinkedList<BusinessEmailModel> businessEmailModels = new LinkedList<>();
-        LinkedList<String> ids = new LinkedList<>();
-        for (IdEmail idEmail : idEmails) {
-            String email = idEmail.getMemberPrimaryEmail();
-            String memberId = idEmail.getMemberId();
-            if (Objects.nonNull(email)) {
-                if (FilterUtil.filterBusinessEmail(email)) {
-                    businessEmailModels.add(new BusinessEmailModel(memberId, email));
-                    ids.add(memberId);
-                }
-            } else {
-                ids.add(memberId);
-            }
-        }
-        businessEmailRepo.saveAll(businessEmailModels);
-        emailRepo.deleteAllByIdInBatch(ids);
-        System.out.println("Business mail ============== DONE ");
-        Thread.currentThread().setDaemon(false);
+//        LinkedList<BusinessEmailModel> businessEmailModels = new LinkedList<>();
+//        LinkedList<String> ids = new LinkedList<>();
+//        for (IdEmail idEmail : idEmails) {
+//            String email = idEmail.getMemberPrimaryEmail();
+//            String memberId = idEmail.getMemberId();
+//            if (Objects.nonNull(email)) {
+//                if (FilterUtil.filterBusinessEmail(email)) {
+//                    businessEmailModels.add(new BusinessEmailModel(memberId, email));
+//                    ids.add(memberId);
+//                }
+//            } else {
+//                ids.add(memberId);
+//            }
+//        }
+//        businessEmailRepo.saveAll(businessEmailModels);
+//        emailRepo.deleteAllByIdInBatch(ids);
+//        System.out.println("Business mail ============== DONE ");
+//        Thread.currentThread().setDaemon(false);
     }
 
     @Transactional(dontRollbackOn = Exception.class)
@@ -164,9 +164,9 @@ public class BusinessEmailService implements Runnable, IFilterService {
     }
 
     @Transactional(dontRollbackOn = Exception.class)
-    public synchronized void filterFromBusiness(List<? extends BaseModel> businessEmailModels) {
-        if (businessEmailModels.size() == 0 || Objects.isNull(businessEmailModels)) {
-            return;
+    public List<? extends BaseModel> filterFromBusiness(List<? extends BaseModel> businessEmailModels) {
+        if (businessEmailModels.size() == 0) {
+            return null;
         }
         this.baseModelsToDelete = new ArrayList<>();
         List<? extends BaseModel> baseModelsOut = null;
@@ -216,6 +216,25 @@ public class BusinessEmailService implements Runnable, IFilterService {
 //        businessEmailRepo.deleteAllByIdInBatch(businessEmailModels.stream().map(BusinessEmailModel::getMemberId).collect(Collectors.toList()));
         deleteByType(businessEmailModels);
         System.out.println("Done filter in Thread: " + Thread.currentThread().getName());
+        return baseModelsOut;
+    }
+
+    @Transactional(dontRollbackOn = Exception.class)
+    public List<? extends BaseModel> filterFromBusinessAgain(List<? extends BaseModel> businessEmailModels) {
+        if (businessEmailModels.size() == 0) {
+            return null;
+        }
+        List<? extends BaseModel> lis1 = filterBusinessByType(businessEmailModels, BusinessMailType.LAW);
+        List<? extends BaseModel> lis2 = filterBusinessByType(lis1, BusinessMailType.BANKING);
+        List<? extends BaseModel> lis3 = filterBusinessByType(lis2, BusinessMailType.TECH);
+        List<? extends BaseModel> lis4 = filterBusinessByType(lis3, BusinessMailType.AUTOMOTIVE);
+        List<? extends BaseModel> lis5 = filterBusinessByType(lis4, BusinessMailType.HEALTH_CARE);
+        List<? extends BaseModel> lis6 = filterBusinessByType(lis5, BusinessMailType.MEDIA);
+        List<? extends BaseModel> lis7 = filterBusinessByType(lis6, BusinessMailType.GLOBAL);
+        List<? extends BaseModel> lis8 = filterBusinessByType(lis7, BusinessMailType.HOTEL);
+        List<? extends BaseModel> lis9 = filterBusinessByType(lis8, BusinessMailType.FASHION);
+//        deleteByType(businessEmailModels);
+        return lis9;
     }
 
     @Transactional(dontRollbackOn = Exception.class)
@@ -227,7 +246,7 @@ public class BusinessEmailService implements Runnable, IFilterService {
                 .collect(Collectors.groupingBy(mail -> (Objects.nonNull(mail.getMemberPrimaryEmail()) && FilterUtil.filterBusinessByType(mail.getMemberPrimaryEmail(), businessMailType))));
         List<BaseModel> idEmailsOut = numbersByIsPositive.get(true);
         if (Objects.nonNull(idEmailsOut) && idEmailsOut.size() > 0) {
-            this.baseModelsToDelete.addAll(idEmailsOut);
+//            this.baseModelsToDelete.addAll(idEmailsOut);
             switch (businessMailType) {
                 case GLOBAL:
                     List<BusinessGlobalModel> businessGlobalModels = AppUtil.mapAll(idEmailsOut, BusinessGlobalModel.class);

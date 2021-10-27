@@ -1,6 +1,7 @@
 package com.saltlux.tool.filter.tool.util;
 
 import com.saltlux.tool.filter.tool.dto.LinkedInAccountDto;
+import org.apache.poi.util.StringUtil;
 
 import java.util.Objects;
 
@@ -231,6 +232,17 @@ public class FilterUtil {
                 || Objects.nonNull(linkedInAccount.getWork_email());
     }
 
+    public static String splitByMail(String mail) {
+        if (Objects.isNull(mail) || mail.startsWith("@") || mail.trim().equals("")) {
+            return null;
+        }
+        if (mail.contains("@")) {
+            String[] splName = mail.split("@");
+            return splName[0];
+        }
+        return null;
+    }
+
     private static boolean checkWithOr(String source, String[] des) {
         if (Objects.isNull(source) || des.length == 0) {
             return false;
@@ -246,7 +258,7 @@ public class FilterUtil {
     }
 
     public static void main(String[] args) {
-        System.out.println(checkWithOr("techlaw1@techlawrecruiting.com", FilterConstraints.BUSINESS_LAWS));
+        System.out.println(splitByMail("     "));
     }
 
     private static boolean checkStartWithOr(String source, String[] des) {

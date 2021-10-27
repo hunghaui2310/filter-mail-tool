@@ -13,15 +13,14 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "tbl_others_mail")
 @NoArgsConstructor
-@AllArgsConstructor
 @Getter
 @Setter
-public class OtherModel{
+public class OtherModel extends BaseModel {
 
-    @Id
-    @Column(name = "MEMBER_ID")
-    private String memberId;
-
-    @Column(name = "MEMBER_PRIMARY_EMAIL")
-    private String memberPrimaryEmail;
+//    @Id
+//    @Column(name = "MEMBER_ID")
+//    private String memberId;
+//
+//    @Column(name = "MEMBER_PRIMARY_EMAIL")
+//    private String memberPrimaryEmail;
 }

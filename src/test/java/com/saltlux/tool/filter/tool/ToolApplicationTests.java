@@ -62,8 +62,8 @@ class ToolApplicationTests {
 
 	@Test
 	void filterAllMail() throws InterruptedException {
-		filterAllMailController.filterAllMail(100);
-		Thread.sleep(2000);
-		saveAllService.saveAllMail();
+//		filterAllMailController.filterAllMail(100);
+//		Thread.sleep(2000);
+//		saveAllService.saveAllMail();
 	}
 }

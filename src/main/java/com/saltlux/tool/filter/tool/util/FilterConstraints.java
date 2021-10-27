@@ -6,14 +6,16 @@ public interface FilterConstraints {
         YAHOO, GMAIL, APPLE, OTHER, ROLE, INVALID, VIETNAM, LSP, GOV, ORG, EDU, SALTLUX
     }
 
-    String[] YAHOOS = new String[]{YAHOO_MAIL.YAHOO, YAHOO_MAIL.YMAIL};
+    String[] YAHOOS = new String[]{YAHOO_MAIL.YAHOO, YAHOO_MAIL.YMAIL, YAHOO_MAIL.YHAOO, YAHOO_MAIL.YAHOOMAIL};
     String[] GMAILS = new String[]{GMAIL.GMAIL, GMAIL.GOOGLE_GMAIL};
     String[] APPLES = new String[]{APPLE.ICLOUD, APPLE.APPLE, APPLE.MAC, APPLE.ME};
-    String[] OTHERS = new String[]{OTHER.MICROSOFT, OTHER.WINDOWS_LIVE, OTHER.OUTLOOK, OTHER.LIVE,
-                    OTHER.MSN, OTHER.GO, OTHER.AOL, OTHER.INBOX, OTHER.EMAIL, OTHER.MAIL, OTHER.HOTMAIL, OTHER.QQ, OTHER.REDIFF_MAIL,
-                    OTHER.Q, OTHER.GMX, OTHER.ZOHO, OTHER.YANDEX, OTHER.MY_SPACE, OTHER.COX, OTHER._126_COM, OTHER.HANMAIL, OTHER.DOMAIN,
-                    OTHER.EARTH_LINK, OTHER._139_COM, OTHER._163_COM, OTHER.VERIZON, OTHER.FREE_MAIL, OTHER.MY_NET, OTHER.SBC_GLOBAL,
-                    OTHER.NAVER, OTHER.DAUM, OTHER.AIM, OTHER.VODAFONE, OTHER.JUNO, OTHER.CHARTER, OTHER.SPECTRUM, OTHER.MYWAY, OTHER.CS};
+    String[] OTHERS = new String[]{OTHER.MICROSOFT, OTHER.WINDOWSLIVE, OTHER.OUTLOOK, OTHER.LIVE,
+                    OTHER.MSN, OTHER.GO, OTHER.AOL, OTHER.INBOX, OTHER.EMAIL, OTHER.MAIL, OTHER.HOTMAIL, OTHER.QQ, OTHER.REDIFFMAIL,
+                    OTHER.Q, OTHER.GMX, OTHER.ZOHO, OTHER.YANDEX, OTHER.MYSPACE, OTHER.COX, OTHER._126, OTHER.HANMAIL, OTHER.DOMAIN,
+                    OTHER.EARTHLINK, OTHER._139, OTHER._163, OTHER.VERIZON, OTHER.FREEMAIL, OTHER.MYNET, OTHER.SBCGLOBAL,
+                    OTHER.NAVER, OTHER.DAUM, OTHER.AIM, OTHER.VODAFONE, OTHER.JUNO, OTHER.CHARTER, OTHER.SPECTRUM, OTHER.MYWAY, OTHER.CS,
+                    OTHER._012, OTHER.HOTMAILL, OTHER.FREE, OTHER.EMAOIL, OTHER.COCMAST, OTHER.OTMLAIL, OTHER.TOM, OTHER.LINKEDIN,
+                    OTHER._1298, OTHER.NTLWORLD, OTHER.INYOURWORLD, OTHER.HOTMAL};
     String[] ROLES = new String[]{ROLE.INFO, ROLE.ADMIN, ROLE.ADMINISTRATOR, ROLE.ADMINISTRATION,
                     ROLE.MARKETING, ROLE.ACCOUNTS, ROLE.ACCOUNT, ROLE.HR, ROLE.MANAGER, ROLE.MAIL, ROLE.EMAIL, ROLE.INBOX, ROLE.SUPPORT,
                     ROLE.NEWS};
@@ -28,13 +30,13 @@ public interface FilterConstraints {
                     EDU.STUDY, EDU.OXFORD, EDU.CAMBRIDGE, EDU.HARVARD, EDU.YALE, EDU.ALUMNI, EDU.TEACH, EDU.TRAINING, EDU.DAYCARE, EDU.KINDERGARTEN};
     String[] SALTLUXS = new String[]{SALTLUX.SALTLUX};
 
-    String[] BUSINESS_GLOBALS = new String[]{BUSINESS_GLOBAL.GLOBAL, BUSINESS_GLOBAL.UNIVERSAL, BUSINESS_GLOBAL.GLOBE, BUSINESS_GLOBAL.WORLD_WIDE,
-            BUSINESS_GLOBAL.WORLD, BUSINESS_GLOBAL.INTERNATIONAL, BUSINESS_GLOBAL.MULTINATIONAL, BUSINESS_GLOBAL.NATION_WIDE, BUSINESS_GLOBAL.COCA_COLA,
-            BUSINESS_GLOBAL.DHL, BUSINESS_GLOBAL.KINDLE, BUSINESS_GLOBAL.LEGO, BUSINESS_GLOBAL.BOOKING_COM, BUSINESS_GLOBAL.LOTTE, BUSINESS_GLOBAL.NIKON,
-            BUSINESS_GLOBAL.CANNON, BUSINESS_GLOBAL.ROCHER, BUSINESS_GLOBAL.SHARP, BUSINESS_GLOBAL.TAOBAO, BUSINESS_GLOBAL.WAL_MART, BUSINESS_GLOBAL.NFL,
-            BUSINESS_GLOBAL.VINGROUP, BUSINESS_GLOBAL.FUJITSU, BUSINESS_GLOBAL.AMAZON, BUSINESS_GLOBAL.ALIBABA, BUSINESS_GLOBAL.ALIPAY, BUSINESS_GLOBAL.FEDEX,
-            BUSINESS_GLOBAL.EPSON, BUSINESS_GLOBAL.FUJIFILM, BUSINESS_GLOBAL.NESTLE, BUSINESS_GLOBAL.DECATHLON, BUSINESS_GLOBAL.LG_COM, BUSINESS_GLOBAL.PG_COM,
-            BUSINESS_GLOBAL.GLOBAL, BUSINESS_GLOBAL.STAR_BUCK, BUSINESS_GLOBAL.PHILIPS};
+    String[] BUSINESS_GLOBALS = new String[]{BUSINESS_GLOBAL.GLOBAL, BUSINESS_GLOBAL.UNIVERSAL, BUSINESS_GLOBAL.GLOBE, BUSINESS_GLOBAL.WORLDWIDE,
+            BUSINESS_GLOBAL.WORLD, BUSINESS_GLOBAL.INTERNATIONAL, BUSINESS_GLOBAL.MULTINATIONAL, BUSINESS_GLOBAL.NATIONWIDE, BUSINESS_GLOBAL.COCA_COLA,
+            BUSINESS_GLOBAL.DHL, BUSINESS_GLOBAL.KINDLE, BUSINESS_GLOBAL.LEGO, BUSINESS_GLOBAL.BOOKING, BUSINESS_GLOBAL.PG, BUSINESS_GLOBAL.NIKON,
+            BUSINESS_GLOBAL.CANON, BUSINESS_GLOBAL.LG, BUSINESS_GLOBAL.SHARP, BUSINESS_GLOBAL.STARBUCKS, BUSINESS_GLOBAL.PEPSI, BUSINESS_GLOBAL.NFL,
+            BUSINESS_GLOBAL.LOGISTICS, BUSINESS_GLOBAL.FUJITSU, BUSINESS_GLOBAL.AMAZON, BUSINESS_GLOBAL.ALIBABA, BUSINESS_GLOBAL.FEDEX,
+            BUSINESS_GLOBAL.EPSON, BUSINESS_GLOBAL.FUJIFILM, BUSINESS_GLOBAL.NESTLE, BUSINESS_GLOBAL.DECATHLON,
+            BUSINESS_GLOBAL.GLOBAL, BUSINESS_GLOBAL.PHILIPS};
     String[] BUSINESS_MEDIAS = new String[]{BUSINESS_MEDIA.FOX, BUSINESS_MEDIA.CBS, BUSINESS_MEDIA.BBC, BUSINESS_MEDIA.CNN, BUSINESS_MEDIA.IMDB,
             BUSINESS_MEDIA.MEDIA, BUSINESS_MEDIA.MAGAZINE};
     String[] BUSINESS_AUTOMOTIVES = new String[]{BUSINESS_AUTOMOTIVE.TOYOTA, BUSINESS_AUTOMOTIVE.HONDA, BUSINESS_AUTOMOTIVE.HYUNDAI, BUSINESS_AUTOMOTIVE.GMC,
@@ -67,6 +69,8 @@ public interface FilterConstraints {
     interface YAHOO_MAIL {
         String YAHOO = "@yahoo.";
         String YMAIL = "@ymail.";
+        String YHAOO = "@yhaoo.";
+        String YAHOOMAIL = "@yahoomail.com";
     }
 
     interface GMAIL {
@@ -83,7 +87,7 @@ public interface FilterConstraints {
 
     interface OTHER {
         String MICROSOFT = "@microsoft.com";
-        String WINDOWS_LIVE = "@windowslive.";
+        String WINDOWSLIVE = "@windowslive.";
         String OUTLOOK = "@outlook.";
         String LIVE = "@live.";
         String MSN = "@msn.";
@@ -91,26 +95,26 @@ public interface FilterConstraints {
         String AOL = "@aol.";
         String INBOX = "@inbox.";
         String EMAIL = "@email.";
-        String MAIL = "@mail.com";
+        String MAIL = "@mail.";
         String HOTMAIL = "@hotmail.";
         String QQ = "@qq.";
-        String REDIFF_MAIL = "@rediffmail.";
+        String REDIFFMAIL = "@rediffmail.";
         String Q = "@q.com";
         String GMX = "@gmx.com";
-        String ZOHO = "@zoho";
+        String ZOHO = "@zoho.";
         String YANDEX = "@yandex.";
-        String MY_SPACE = "@myspace";
+        String MYSPACE = "@myspace.";
         String COX = "@cox.net";
-        String _126_COM = "@126.com";
+        String _126 = "@126.com";
         String HANMAIL = "@hanmail.";
-        String DOMAIN = "@domain";
-        String EARTH_LINK = "@earthlink";
-        String _139_COM = "@139.com";
-        String _163_COM = "@163.com";
+        String DOMAIN = "@domain.";
+        String EARTHLINK = "@earthlink.";
+        String _139 = "@139.com";
+        String _163 = "@163.com";
         String VERIZON = "@verizon.net";
-        String FREE_MAIL = "@freemail.";
-        String MY_NET = "@mynet.";
-        String SBC_GLOBAL = "@sbcglobal.net";
+        String FREEMAIL = "@freemail.";
+        String MYNET = "@mynet.";
+        String SBCGLOBAL = "@sbcglobal.net";
         String NAVER = "@naver.com";
         String DAUM = "@daum.";
         String AIM = "@aim.com";
@@ -120,6 +124,18 @@ public interface FilterConstraints {
         String SPECTRUM = "@spectrum.net";
         String MYWAY = "@myway.com";
         String CS = "@cs.com";
+        String _012 = "@012.net.il";
+        String HOTMAILL = "@hotmaill.";
+        String FREE = "@free.fr";
+        String EMAOIL = "@emaoil.com";
+        String COCMAST = "@cocmast.net";
+        String OTMLAIL = "@otmlail.com";
+        String TOM = "@tom.com";
+        String LINKEDIN = "@linkedin.com";
+        String _1298 = "@1298.org.in";
+        String NTLWORLD = "@ntlworld.com";
+        String INYOURWORLD = "@inyourworld.com";
+        String HOTMAL = "@hotmal.com";
     }
 
     interface ROLE {
@@ -209,38 +225,34 @@ public interface FilterConstraints {
         String GLOBAL = "global";
         String UNIVERSAL = "universal";
         String GLOBE = "globe";
-        String WORLD_WIDE = "worldwide";
+        String WORLDWIDE = "worldwide";
         String WORLD = "world";
         String INTERNATIONAL = "international";
         String MULTINATIONAL = "multinational";
-        String NATION_WIDE = "nationwide";
+        String NATIONWIDE = "nationwide";
         String COCA_COLA = "coca-cola";
-        String DHL = "dhl";
-        String KINDLE = "kindle";
-        String LEGO = "lego";
-        String BOOKING_COM = "booking.com";
-        String LOTTE = "lotte";
-        String NIKON = "nikon";
-        String CANNON = "canon";
-        String ROCHER = "rocher";
-        String SHARP = "sharp";
-        String TAOBAO = "taobao";
-        String WAL_MART = "walmart";
-        String NFL = "nfl";
-        String VINGROUP = "vingroup";
+        String DHL = "dhl.com";
+        String KINDLE = "kindle.com";
+        String LEGO = "lego.com";
+        String BOOKING = "booking.com";
+        String NIKON = "nikon.";
+        String CANON = "canon.";
+        String SHARP = "@sharp.com";
+        String NFL = "nfl.com";
         String FUJITSU = "fujitsu";
         String AMAZON = "amazon";
         String ALIBABA = "alibaba";
-        String ALIPAY = "alipay";
-        String FEDEX = "fedex";
-        String EPSON = "epson";
+        String FEDEX = "fedex.com";
+        String EPSON = "epson.";
         String FUJIFILM = "fujifilm";
-        String NESTLE = "nestle";
+        String NESTLE = "nestle.com";
         String DECATHLON = "decathlon";
-        String LG_COM = "@lg.com";
-        String PG_COM = "@pg.com";
-        String STAR_BUCK = "starbuck";
-        String PHILIPS = "philips";
+        String LG = "@lg.com";
+        String PG = "@pg.com";
+        String STARBUCKS = "@starbucks.com";
+        String PHILIPS = "@philips.com";
+        String PEPSI = "@pepsi.com";
+        String LOGISTICS = "logistics";
     }
 
     interface BUSINESS_MEDIA {
